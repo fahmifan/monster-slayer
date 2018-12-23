@@ -1,14 +1,14 @@
 const playerState = {
   health: 0,
-  attack: 2,
-  specialAttack: 10,
-  heal: 1
+  maxAttack: 10,
+  minAttack: 3,
+  heal: 10
 }
 
 const monsterState = {
   health: 0,
-  attack: 1,
-  specialAttack: 4,
+  maxAttack: 15,
+  minAttack: 1,
 }
 
 const battleLog = {
@@ -24,8 +24,6 @@ const app = new Vue({
     player: {...playerState},
     monster: {...monsterState},
     battleLogs: [],
-    monsterBarWidth: 100,
-    playerBarWidth: 100,
   },
   methods: {
     startGame() {
@@ -33,12 +31,15 @@ const app = new Vue({
       this.player.health = 100
       this.monster.health = 100
     },
+    resetState() {
+      this.player = {...playerState}
+      this.monster = {...monsterState}
+      battleLogs = []
+    },
     giveUp() {
       alert(`End Game ?`);
       this.playerGiveUp = true
       this.gameIsRunning = false
-      this.player = {...playerState}
-      this.monster = {...monsterState}
     },
     logBattle(monsterLog, playerLog) {
       const log = {...battleLog}
@@ -47,43 +48,60 @@ const app = new Vue({
 
       this.battleLogs.push(log)
     },
+    randomInRange(maxDamage, minDamage) {
+      return Math.max((Math.floor(Math.random() * maxDamage) + 1), minDamage)
+    },
     playerAttack() {
-      if(this.monster.health <= 0) {
-        this.giveUp()
-        return
-      }
-      this.monster.health -= this.player.attack
+      if(this.isGameEnd()) return
+      // player attack reduce monster health
+      const playerDamage = this.randomInRange(this.player.maxAttack, this.player.minAttack)
+      this.monster.health -= playerDamage
       
-      if(this.player.health <= 0) {
-        this.giveUp()
-        return
-      }
-      this.player.health -= this.monster.attack
+      if(this.isGameEnd()) return
+      // monster attack reduce player health
+      const monsterDamage = this.randomInRange(this.monster.maxAttack, this.monster.minAttack)
+      this.player.health -= monsterDamage
 
-      this.logBattle(`MONSTER HIST PLAYER FOR ${this.monster.attack}`, 
-        `PLAYER HIST MONSTER FOR ${this.player.attack}`)
+      this.logBattle(`MONSTER HIST PLAYER FOR ${monsterDamage}`, 
+        `PLAYER HIST MONSTER FOR ${playerDamage}`)
+    },
+    isGameEnd() {
+      if(this.monster.health <= 0) {
+        this.gameIsRunning = false
+        alert('You Won!')
+        this.resetState()
+        return true
+      }
+      else if(this.player.health <= 0) {
+        this.gameIsRunning = false
+        alert('You Loose!')
+        this.resetState()
+        return true
+      }
+
+      return false
     },
     playerSpecialAttack() {
-      if(this.monster.health <= 0) {
-        this.giveUp()
-        return
-      }
+      if(this.isGameEnd()) return
+      // player attack reduce player health
+      const playerDamage = this.randomInRange(this.player.maxAttack + 5, this.player.minAttack + 5)
+      this.monster.health -= playerDamage
 
-      this.monster.health -= this.player.specialAttack
-
-      if(this.player.health <= 0) {
-        this.giveUp()
-        return
-      }
-      this.player.health -= this.monster.specialAttack
+      if(this.isGameEnd()) return
+      // monster attack reduce player health
+      this.player.health -= this.randomInRange(this.monster.maxAttack + 5, this.monster.minAttack + 5)
 
       this.logBattle(`MONSTER HIST PLAYER FOR ${this.monster.specialAttack}`, 
-        `PLAYER HIST MONSTER FOR ${this.player.specialAttack}`)
+        `PLAYER HIST MONSTER FOR ${playerDamage}`)
     },
     playerHeal() {
-      this.player.health < 100 && (this.player.health += this.player.heal)
-      this.logBattle('', 
-      `PLAYER HEALS FOR ${this.player.attack}`)
+      if(this.isGameEnd()) return      
+
+      // don't heal if the health is full
+      if(this.player.health >= 100) return 
+      
+      this.player.health += this.randomInRange(this.player.heal, 1)
+      this.logBattle('', `PLAYER HEALS FOR ${this.player.heal}`)
     }
   },
   computed: {
