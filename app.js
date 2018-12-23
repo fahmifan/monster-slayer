@@ -34,12 +34,39 @@ const app = new Vue({
     resetState() {
       this.player = {...playerState}
       this.monster = {...monsterState}
-      battleLogs = []
+      this.battleLogs = []
+    },
+    isGameEnd() {
+      // player win
+      if(this.monster.health <= 0) {
+        this.gameIsRunning = false
+        alert('You Won!')
+        this.resetState()
+        return true
+      }
+      // player loose
+      else if(this.player.health <= 0) {
+        alert('You Loose!')
+
+        // ask to run a new game
+        if(confirm('Start new game?')) {
+          this.resetState()
+          this.startGame()
+          this.gameIsRunning = true
+          return true
+        }
+
+        this.gameIsRunning = false
+        return true
+      }
+
+      return false
     },
     giveUp() {
       alert(`End Game ?`);
       this.playerGiveUp = true
       this.gameIsRunning = false
+      this.resetState()
     },
     logBattle(monsterLog, playerLog) {
       const log = {...battleLog}
@@ -64,22 +91,8 @@ const app = new Vue({
 
       this.logBattle(`MONSTER HIST PLAYER FOR ${monsterDamage}`, 
         `PLAYER HIST MONSTER FOR ${playerDamage}`)
-    },
-    isGameEnd() {
-      if(this.monster.health <= 0) {
-        this.gameIsRunning = false
-        alert('You Won!')
-        this.resetState()
-        return true
-      }
-      else if(this.player.health <= 0) {
-        this.gameIsRunning = false
-        alert('You Loose!')
-        this.resetState()
-        return true
-      }
 
-      return false
+      if(this.isGameEnd()) return
     },
     playerSpecialAttack() {
       if(this.isGameEnd()) return
@@ -93,6 +106,8 @@ const app = new Vue({
 
       this.logBattle(`MONSTER HIST PLAYER FOR ${this.monster.specialAttack}`, 
         `PLAYER HIST MONSTER FOR ${playerDamage}`)
+
+      if(this.isGameEnd()) return
     },
     playerHeal() {
       if(this.isGameEnd()) return      
