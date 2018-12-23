@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monster Slayer</title>
+    <script src="https://npmcdn.com/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="css/foundation.min.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+    <section class="row">
+        <div class="small-6 columns">
+            <h1 class="text-center">YOU</h1>
+            <div class="healthbar">
+                <div class="healthbar text-center" 
+                    :style="playerHealthBarWidth">
+                    <div class="center-all">
+                        <span>{{ player.health  }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="small-6 columns">
+            <h1 class="text-center">MONSTER</h1>
+            <div class="healthbar">
+                <div class="healthbar text-center" 
+                    :style="monsterHealthBarWidth">
+                    <div class="center-all">
+                        <span>{{ monster.health  }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="row controls" v-if="!gameIsRunning">
+        <div class="small-12 columns">
+            <button id="start-game" @click="startGame">START NEW GAME</button>
+        </div>
+    </section>
+    <template v-if="gameIsRunning">
+        <section class="row controls">
+            <div class="small-12 columns">
+                <button id="attack" @click="playerAttack">ATTACK</button>
+                <button id="special-attack" @click="playerSpecialAttack">SPECIAL ATTACK</button>
+                <button id="heal" @click="playerHeal">HEAL</button>
+                <button id="give-up" @click="giveUp">GIVE UP</button>
+            </div>
+        </section>
+        <section class="row log">
+            <div class="small-12 columns">
+                <ul>
+                    <template v-for="log in battleLogs">
+                        <li>
+                            <p v-if="log.monster" class="monster-turn">{{ log.monster }}</p>
+                            <p v-if="log.player" class="player-turn">{{ log.player  }}</p>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </section>
+    </template>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
