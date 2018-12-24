@@ -114,7 +114,14 @@ const app = new Vue({
       // don't heal if the health is full
       if(this.player.health >= 100) return 
       
-      this.player.health += this.randomInRange(this.player.heal, 1)
+      // prevent heal over 100 (max)
+      if(this.player.health <= 90) {
+        this.player.health += this.randomInRange(this.player.heal, 1)
+      } 
+      else {
+        this.player.health = 100
+      }
+      
       this.logBattle('', `PLAYER HEALS FOR ${this.player.heal}`)
     }
   },
