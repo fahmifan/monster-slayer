@@ -73,7 +73,7 @@ const app = new Vue({
       log.monster = monsterLog
       log.player = playerLog
 
-      this.battleLogs.push(log)
+      this.battleLogs.unshift(log)
     },
     randomInRange(maxDamage, minDamage) {
       return Math.max((Math.floor(Math.random() * maxDamage) + 1), minDamage)
