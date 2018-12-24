@@ -40,9 +40,9 @@
     <template v-if="gameIsRunning">
         <section class="row controls">
             <div class="small-12 columns">
-                <button id="attack" @click="playerAttack">ATTACK</button>
-                <button id="special-attack" @click="playerSpecialAttack">SPECIAL ATTACK</button>
-                <button id="heal" @click="playerHeal">HEAL</button>
+                <button id="attack" @click="attack">ATTACK</button>
+                <button id="special-attack" @click="specialAttack">SPECIAL ATTACK</button>
+                <button id="heal" @click="heal">HEAL</button>
                 <button id="give-up" @click="giveUp">GIVE UP</button>
             </div>
         </section>
